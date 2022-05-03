@@ -1,0 +1,75 @@
+version: 2.1
+parameters:
+  update-migrations:
+    type: boolean
+    default: false
+  update-schema-model:
+    type: boolean
+    default: false
+  ciJDBC:
+    type: string
+    default: "jdbc:sqlserver://pn-sql-dev.database.windows.net:1433;database=cars"
+  prodJDBC:
+    type: string
+    default: "jdbc:sqlserver://pn-sql-prod.database.windows.net:1433;database=cars"
+  migrationPath:
+    type: string
+    default: "./migrations"
+ 
+jobs:
+  clean:
+    docker:
+      - image: flyway/flyway:latest-alpine
+    steps:
+      - checkout
+      - run:
+          name: "Clean Build Database"
+          command: flyway clean -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME_LOCAL -password=$PASSWORD_LOCAL -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+ 
+  build:
+    docker:
+      - image: flyway/flyway:latest-alpine
+    steps:
+      - checkout
+      - run:
+          name: "Migrate to Build Database"
+          command: flyway migrate -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME_LOCAL -password=$PASSWORD_LOCAL -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+ 
+  deploy:
+    docker:
+      - image: flyway/flyway:latest-alpine
+    steps:
+      - checkout
+      - run:
+          name: Check file path
+          command: |
+            ls
+      - run:
+          name: "Deploy to Prod"
+          command: flyway migrate -url="<< pipeline.parameters.prodJDBC >>" -user=$USERNAME_TARGET -password=$PASSWORD_TARGET -locations=filesystem:<< pipeline.parameters.migrationPath >> -baselineOnMigrate=true -baselineVersion=1.0.0.20220427175328 -$EDITION
+ 
+workflows:
+  database-deploy-workflow:
+    jobs:
+      - clean:
+          context: Database
+          # filters:
+          #   branches:
+          #     only:
+          #     - /main
+      - build:
+          requires:
+            - clean
+          context: Database
+          # filters:
+          #   branches:
+          #     only:
+          #     - /main
+      - deploy:
+          requires:
+            - build
+          context: Database
+          # filters:
+          #   branches:
+          #     only:
+          #     - /main

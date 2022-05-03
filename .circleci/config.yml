@@ -1,0 +1,17 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  path-filtering: circleci/path-filtering@0.0.2
+
+workflows:
+  always-run:
+    jobs:
+      - path-filtering/filter:
+          name: check-updated-files
+          mapping: |
+            migrations/.* update-migrations true
+            schema-model/.* update-schema-model true
+          base-revision: main
+          config-path: .circleci/workflow.yml
