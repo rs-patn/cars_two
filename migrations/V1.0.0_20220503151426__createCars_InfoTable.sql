@@ -12,3 +12,5 @@ CREATE TABLE [dbo].[car_info]
 [color] [varchar] (25) NULL
 )
 GO
+
+-- test
