@@ -24,7 +24,7 @@ jobs:
       - checkout
       - run:
           name: "Clean Build Database"
-          command: flyway clean -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+          command: flyway clean -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.migrationPath >> -$EDITION
  
   build:
     docker:
@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run:
           name: "Migrate to Build Database"
-          command: flyway migrate -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+          command: flyway migrate -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.migrationPath >> -$EDITION
  
   deploy:
     docker:
