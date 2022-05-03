@@ -24,7 +24,7 @@ jobs:
       - checkout
       - run:
           name: "Clean Build Database"
-          command: flyway clean -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME_LOCAL -password=$PASSWORD_LOCAL -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+          command: flyway clean -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
  
   build:
     docker:
@@ -33,7 +33,7 @@ jobs:
       - checkout
       - run:
           name: "Migrate to Build Database"
-          command: flyway migrate -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME_LOCAL -password=$PASSWORD_LOCAL -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
+          command: flyway migrate -url="<< pipeline.parameters.ciJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.update-migrations >> -$EDITION
  
   deploy:
     docker:
@@ -46,7 +46,7 @@ jobs:
             ls
       - run:
           name: "Deploy to Prod"
-          command: flyway migrate -url="<< pipeline.parameters.prodJDBC >>" -user=$USERNAME_TARGET -password=$PASSWORD_TARGET -locations=filesystem:<< pipeline.parameters.migrationPath >> -baselineOnMigrate=true -baselineVersion=1.0.0.20220427175328 -$EDITION
+          command: flyway migrate -url="<< pipeline.parameters.prodJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.migrationPath >> -baselineOnMigrate=true -baselineVersion=1.0.0.20220427175328 -$EDITION
  
 workflows:
   database-deploy-workflow:
