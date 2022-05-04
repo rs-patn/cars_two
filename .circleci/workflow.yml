@@ -41,10 +41,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check file path
-          command: |
-            ls
-      - run:
           name: "Deploy to Prod"
           command: flyway migrate -url="<< pipeline.parameters.prodJDBC >>" -user=$USERNAME -password=$PASSWORD -locations=filesystem:<< pipeline.parameters.migrationPath >> -baselineOnMigrate=true -baselineVersion=1.0.0.20220503151426 -$EDITION
  

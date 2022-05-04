@@ -1,0 +1,16 @@
+﻿SET NUMERIC_ROUNDABORT OFF
+GO
+SET ANSI_PADDING, ANSI_WARNINGS, CONCAT_NULL_YIELDS_NULL, ARITHABORT, QUOTED_IDENTIFIER, ANSI_NULLS ON
+GO
+PRINT N'Altering [dbo].[car_info]'
+GO
+ALTER TABLE [dbo].[car_info] ADD
+[license_plate] [varchar] (25) NULL
+GO
+PRINT N'Creating [dbo].[SelectAllCarInfos]'
+GO
+CREATE PROCEDURE [dbo].[SelectAllCarInfos]
+AS
+SELECT * FROM dbo.car_info
+GO;
+GO
